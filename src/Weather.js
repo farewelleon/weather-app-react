@@ -1,34 +1,52 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./Weather.css";
-import FormattedDate from "./FormattedDate";
+import WeatherInfo from "./WeatherInfo";
 
 export default function Weather(props) {
     const [weatherData, setWeatherData] = useState({ready: false});
+    const [city, setCity] = useState(props.defaultCity);
     function handleResponse(response) {
         console.log(response.data);
         setWeatherData({
             ready: true,
-            temperature: response.data.temperature.current,
+            temperature: response.data.main.temp,
             wind: response.data.wind.speed,
-            humidity: response.data.temperature.humidity,
-            city: response.data.city,
-            description: response.data.condition.description,
-            iconUrl: response.data.condition.icon_url,
-            date: new Date(response.data.time * 1000)
+            humidity: response.data.main.humidity,
+            city: response.data.name,
+            description: response.data.weather[0].description,
+            icon: response.data.weather[0].icon,
+            date: new Date(response.data.dt * 1000)
 
         })
     }
+
+    function search() {
+    const apiKey = "9ef12bc802f7a425a0a46bc5e5d5ffc8";
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    axios.get(url).then(handleResponse);
+    }
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        search();
+    }
+
+    function handleCityChange(event) {
+        setCity(event.target.value);
+    }
+
     if (weatherData.ready) {
         return (
             <div className="Weather">
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="row">
                         <div className="col-9">
                             <input type="search"
                              placeholder="Enter a city..." 
                              className="form-control"
-                             autoFocus="on" />
+                             autoFocus="on" 
+                             onChange={handleCityChange} />
                         </div>
                         <div className="col-3">
                             <input type="submit" value="Search"
@@ -36,43 +54,12 @@ export default function Weather(props) {
                         </div>
                     </div>
                 </form>
-                <h1>{weatherData.city}</h1>
-                <ul>
-                    <li>
-                        <FormattedDate date={weatherData.date} />
-                    </li>
-                    <li>
-                        {weatherData.description[0].toUpperCase() + weatherData.description.substring(1)}
-                    </li>
-                </ul>
-                <div className="row mt-3">
-                    <div className="col-6">
-                        <div className="clearfix">
-                        <img
-                        src={weatherData.iconUrl}
-                        alt={weatherData.description}
-                        className="float-left"  />
-                        <div className="float-left">
-                        <span className="temperature">{Math.round(weatherData.temperature)}</span>
-                        <span className="unit">°C</span>
-                        </div>
-                        </div>
-                    </div>
-                    <div className="col-6">
-                        <ul>
-                            <li>Precipitation: 15%</li>
-                            <li>Humidity: {weatherData.humidity}%</li>
-                            <li>Wind: {weatherData.wind} km/h</li>
-                        </ul>
-                    </div>
+                <WeatherInfo data={weatherData}/> 
                 </div>
-            </div>
-        )
+                )
     } else {
-        const apiKey = "8f87b043f8f6ac9a35b778oe0a0t51e6";
-    let url = `https://api.shecodes.io/weather/v1/current?query=${props.defaultCity}&key=${apiKey}&units=metric`;
-    axios.get(url).then(handleResponse);
-  return "Loading..."
+    search();
+    return "Loading..."
     }
     
 }
