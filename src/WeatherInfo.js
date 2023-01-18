@@ -1,8 +1,10 @@
 import React from "react";
 import FormattedDate from "./FormattedDate";
 import WeatherIcon from "./WeatherIcon";
+import WeatherTemperature from "./WeatherTemperature";
 
 export default function  WeatherInfo(props) {
+    console.log(props);
     let condititionText = `${props.data.description[0].toUpperCase() + props.data.description.substring(1)}`;
     return (
         <div className="WeatherInfo">
@@ -23,8 +25,7 @@ export default function  WeatherInfo(props) {
                             <WeatherIcon code={props.data.icon}/>
                         </div>
                         <div className="float-left">
-                            <span className="temperature">{Math.round(props.data.temperature)}</span>
-                            <span className="unit">°C</span>
+                            <WeatherTemperature celsius={props.data.temperature} />
                         </div>
                     </div>
                 </div>
