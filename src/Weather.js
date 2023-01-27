@@ -11,7 +11,9 @@ export default function Weather() {
   const inputCity = useRef(null);
 
   useEffect(() => {
-    search();
+    const apiKey = "9ef12bc802f7a425a0a46bc5e5d5ffc8";
+    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+    axios.get(url).then(handleResponse);
   }, [city]);
 
   //   function handleResponse(response) {
@@ -41,11 +43,11 @@ export default function Weather() {
     });
   }
 
-  function search() {
-    const apiKey = "9ef12bc802f7a425a0a46bc5e5d5ffc8";
-    let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-    axios.get(url).then(handleResponse);
-  }
+  // function search() {
+  //   const apiKey = "9ef12bc802f7a425a0a46bc5e5d5ffc8";
+  //   let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  //   axios.get(url).then(handleResponse);
+  // }
 
   function handleSubmit(event) {
     event.preventDefault();
