@@ -14,6 +14,21 @@ export default function WeatherForecast({ coord }) {
     const apiKey = "9ef12bc802f7a425a0a46bc5e5d5ffc8";
     const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
     axios.get(apiUrl).then(showForecast);
+    function showForecast({ data }) {
+      console.log(data);
+      const { list } = data;
+      const forecast = {};
+      list.forEach((item) => {
+        const day = getDayFromMilisecons(item.dt);
+        if (!forecast.hasOwnProperty(day)) {
+          forecast[day] = [];
+        }
+        forecast[day].push(item);
+        console.log(forecast);
+      });
+      setForecast(forecast);
+      setLoaded(true);
+    }
   }, [coord]);
 
   function getDayFromMilisecons(miliseconds) {
@@ -23,21 +38,21 @@ export default function WeatherForecast({ coord }) {
     return days[day];
   }
 
-  function showForecast({ data }) {
-    console.log(data);
-    const { list } = data;
-    const forecast = {};
-    list.forEach((item) => {
-      const day = getDayFromMilisecons(item.dt);
-      if (!forecast.hasOwnProperty(day)) {
-        forecast[day] = [];
-      }
-      forecast[day].push(item);
-      console.log(forecast);
-    });
-    setForecast(forecast);
-    setLoaded(true);
-  }
+  // function showForecast({ data }) {
+  //   console.log(data);
+  //   const { list } = data;
+  //   const forecast = {};
+  //   list.forEach((item) => {
+  //     const day = getDayFromMilisecons(item.dt);
+  //     if (!forecast.hasOwnProperty(day)) {
+  //       forecast[day] = [];
+  //     }
+  //     forecast[day].push(item);
+  //     console.log(forecast);
+  //   });
+  //   setForecast(forecast);
+  //   setLoaded(true);
+  // }
 
   return (
     <div className="weather-forecast">
